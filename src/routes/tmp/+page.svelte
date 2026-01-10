@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { onMount, tick } from 'svelte';
-	import getPathEndpoints from '$lib/svg/getPathEndpoints';
-	import pointsToSmoothSVGPath from '$lib/svg/pointsToSmoothSVGPath';
-	import shakeElement from '$lib/effects/shakeElement';
-	import { loadKanjiSvg } from '$lib/svg/loadKanjiSvg';
+	import { onMount, tick } from "svelte";
+	import getPathEndpoints from "$lib/svg/getPathEndpoints";
+	import pointsToSmoothSVGPath from "$lib/svg/pointsToSmoothSVGPath";
+	import shakeElement from "$lib/effects/shakeElement";
+	import { loadKanjiSvg } from "$lib/svg/loadKanjiSvg";
 
 	interface ViewBox {
 		x: number;
@@ -37,8 +37,8 @@
 		valid: boolean;
 	}
 
-	let kanji: string = '村';
-	let rawKanjiSvg: string = '';
+	let kanji: string = "村";
+	let rawKanjiSvg: string = "";
 
 	let viewBox: ViewBox = $state({ x: 0, y: 0, w: 109, h: 109 });
 	let kanjiStrokes: KanjiStroke[] = $state([]);
@@ -61,8 +61,8 @@
 	let current: Stroke | null = $state(null);
 
 	function parseViewBox(doc: Document): ViewBox {
-		const svg = doc.querySelector('svg');
-		const vb = svg?.getAttribute('viewBox') ?? '0 0 109 109';
+		const svg = doc.querySelector("svg");
+		const vb = svg?.getAttribute("viewBox") ?? "0 0 109 109";
 		const [x, y, w, h] = vb.split(/\s+/).map(Number);
 		return { x, y, w, h };
 	}
@@ -70,7 +70,9 @@
 	function markStrokeCorrectAndAdvance() {
 		if (!kanjiStrokes.length) return;
 
-		kanjiStrokes = kanjiStrokes.map((s, i) => (i === activeIndex ? { ...s, completed: true } : s));
+		kanjiStrokes = kanjiStrokes.map((s, i) =>
+			i === activeIndex ? { ...s, completed: true } : s
+		);
 		if (activeIndex < kanjiStrokes.length - 1) {
 			activeIndex += 1;
 		}
@@ -106,7 +108,7 @@
 	function pointerDown(e: PointerEvent) {
 		const p = canvasToViewBox(getCanvasPoint(e));
 		current = {
-			id: 'stroke-' + String(activeIndex),
+			id: "stroke-" + String(activeIndex),
 			d: `M ${p.x.toFixed(4)} ${p.y.toFixed(4)}`,
 			length: 0,
 			points: [{ x: p.x, y: p.y }],
@@ -154,7 +156,7 @@
 				strokes = strokes.filter((s) => s); // compact array so {#each} drops it
 
 				current = null;
-				console.log('failed');
+				console.log("failed");
 			}
 		}
 
@@ -198,13 +200,13 @@
 
 	onMount(async () => {
 		rawKanjiSvg = await loadKanjiSvg(kanji);
-		const svgDoc = new DOMParser().parseFromString(rawKanjiSvg, 'image/svg+xml');
+		const svgDoc = new DOMParser().parseFromString(rawKanjiSvg, "image/svg+xml");
 		viewBox = parseViewBox(svgDoc);
 
-		kanjiStrokes = [...svgDoc.querySelectorAll('path')]
+		kanjiStrokes = [...svgDoc.querySelectorAll("path")]
 			.map((p) => {
-				const d = p.getAttribute('d') ?? '';
-				const id = p.getAttribute('id') ?? '';
+				const d = p.getAttribute("d") ?? "";
+				const id = p.getAttribute("id") ?? "";
 				return {
 					id: id,
 					d: d,
@@ -303,8 +305,8 @@
 					class:dash={true}
 					class:hidden={i !== activeIndex}
 					class:completed={kStroke.completed}
-					marker-start={kStroke.completed ? '' : 'url(#start-marker)'}
-					marker-end={kStroke.completed ? '' : 'url(#end-marker)'}
+					marker-start={kStroke.completed ? "" : "url(#start-marker)"}
+					marker-end={kStroke.completed ? "" : "url(#end-marker)"}
 				>
 				</path>
 			{/each}
@@ -346,33 +348,55 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 12px;
+		gap: 1rem;
+		min-height: 100dvh;
+		padding: 1.25rem;
+
+		background:
+			radial-gradient(1200px 700px at 50% -10%, var(--wash), transparent 55%),
+			radial-gradient(900px 520px at 90% 20%, var(--wash2), transparent 60%),
+			linear-gradient(180deg, var(--paper), var(--paper));
+
+		color: var(--ink);
+		font-family: var(--font);
 	}
 
+	/* Stage becomes a paper surface with ink border */
 	.stage {
 		position: relative;
-		width: 600px;
-		height: 600px;
-		border: 1px solid black;
+		width: min(600px, 92vw);
+		aspect-ratio: 1 / 1;
+
+		border-radius: var(--radius-lg);
+		background: var(--paper-soft);
+
+		border: 2px solid var(--stroke-strong);
+
+		box-shadow: var(--shadow);
+		overflow: hidden;
+
 		will-change: transform;
 	}
 
+	/* very subtle guide grid */
 	.kanji-grid {
 		position: absolute;
 		inset: 0;
 		width: 100%;
 		height: 100%;
+		opacity: 0.95;
 	}
 
 	.kanji-grid path {
 		fill: none;
-		stroke: lightgray;
-		stroke-width: 0.5;
+		stroke: rgba(36, 27, 26, 0.12);
+		stroke-width: 0.55;
 		stroke-linecap: round;
 		stroke-linejoin: round;
 		stroke-dasharray: 2.5 2;
 	}
 
+	/* main svg overlay */
 	.kanji {
 		position: absolute;
 		inset: 0;
@@ -386,34 +410,41 @@
 		stroke-linejoin: round;
 	}
 
+	/* completed / reference strokes */
 	.kanji path.fill {
 		stroke-width: 3;
-		stroke: lightgray;
+		stroke: rgba(36, 27, 26, 0.16);
 	}
 
+	/* active dashed guide stroke */
 	.kanji path.dash {
-		stroke: coral;
-		stroke-width: 1;
-		stroke-dasharray: 1.5 3;
+		stroke: var(--coral);
+		stroke-width: 1.2;
+		stroke-dasharray: 1.6 3.2;
+		filter: drop-shadow(0 2px 6px rgba(255, 92, 74, 0.12));
 	}
 
 	.kanji .hidden {
 		opacity: 0;
 	}
 
+	/* markers */
 	.kanji .start-cap {
-		fill: coral;
+		fill: var(--coral);
 	}
 
 	.kanji .end-cap {
-		stroke: coral;
-		fill: coral;
+		stroke: var(--coral);
+		fill: var(--coral);
 	}
 
+	/* completed stroke becomes ink */
 	.kanji path.completed {
-		stroke: #000;
+		stroke: var(--ink);
+		opacity: 0.95;
 	}
 
+	/* user drawn strokes */
 	.svg-output {
 		position: absolute;
 		inset: 0;
@@ -423,37 +454,104 @@
 
 	.svg-output path {
 		fill: none;
-		stroke: #000;
-		stroke-width: 3;
+		stroke: var(--ink);
+		stroke-width: 3.2;
 		stroke-linecap: round;
 		stroke-linejoin: round;
+		filter: drop-shadow(0 2px 4px rgba(36, 27, 26, 0.08));
 	}
 
 	.svg-output path.hidden {
 		opacity: 0;
 	}
 
+	/* input capture */
 	.drawing-input {
 		position: absolute;
 		inset: 0;
 		width: 100%;
 		height: 100%;
 		background: transparent;
+		touch-action: none; /* important for pointer drawing on mobile */
+		cursor: crosshair;
 	}
 
+	/* Controls area as a small paper card */
 	.controls {
 		display: flex;
 		flex-direction: column;
-		gap: 8px;
-		width: 300px;
+		gap: 0.6rem;
+		width: min(360px, 92vw);
+
+		border-radius: var(--radius-md);
+		background: var(--paper-soft);
+		border: 2px solid var(--stroke);
+
+		box-shadow: var(--shadow-soft);
+		padding: 0.85rem;
 	}
 
+	/* button system consistent with kana page */
 	button {
-		padding: 8px 10px;
+		border: 2px solid var(--stroke);
+		background: var(--paper);
+		color: var(--ink);
+
+		padding: 0.65rem 0.9rem;
+		border-radius: var(--radius-sm);
+
+		font-family: var(--font);
+		font-weight: 900;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+
+		cursor: pointer;
+		box-shadow: var(--shadow-soft);
+
+		transition:
+			transform 140ms ease,
+			box-shadow 140ms ease,
+			border-color 140ms ease,
+			background 140ms ease;
 	}
 
+	button:hover {
+		transform: translateY(-2px);
+		border-color: var(--stroke-accent);
+		box-shadow: var(--shadow);
+		background: rgba(255, 255, 255, 0.96);
+	}
+
+	button:active {
+		transform: translateY(-1px);
+		box-shadow: var(--shadow-soft);
+	}
+
+	button:focus-visible {
+		outline: 3px solid var(--stroke-accent);
+		outline-offset: 3px;
+	}
+
+	/* status text */
 	.status {
-		font-size: 14px;
-		opacity: 0.8;
+		font-size: 0.95rem;
+		color: var(--muted);
+		font-weight: 650;
+		letter-spacing: 0.02em;
+	}
+
+	/* optional: improve spacing on small screens */
+	@media (max-width: 640px) {
+		.page {
+			padding: 1rem;
+		}
+
+		.stage {
+			border-radius: var(--radius-md);
+		}
+
+		.controls {
+			padding: 0.75rem;
+		}
 	}
 </style>

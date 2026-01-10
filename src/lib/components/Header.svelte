@@ -15,8 +15,6 @@
 
 <style>
 	header {
-		position: absolute;
-		z-index: 90;
 		display: flex;
 		width: 100dvw;
 		height: fit-content;
