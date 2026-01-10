@@ -37,7 +37,7 @@
 		valid: boolean;
 	}
 
-	let kanji: string = "村";
+	let kanji: string = "挨";
 	let rawKanjiSvg: string = "";
 
 	let viewBox: ViewBox = $state({ x: 0, y: 0, w: 109, h: 109 });
