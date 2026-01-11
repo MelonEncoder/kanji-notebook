@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SymbolCard from "$lib/components/SymbolCard.svelte";
 	import {
 		KANA,
 		type KanaCell,
@@ -132,10 +133,12 @@
 		<div class="gojuonGrid" aria-label={title}>
 			{#each cells as cell, i (cell?.id ?? `empty:${i}`)}
 				{#if cell && script}
-					<button type="button" class="cell" title={cell.romaji}>
-						<div class="glyph">{charOf(cell, script)}</div>
-						<div class="romaji">{cell.romaji}</div>
-					</button>
+					<SymbolCard
+						selected={false}
+						symbol={charOf(cell, script)}
+						subText={cell.romaji}
+						onclick={() => {}}
+					/>
 				{:else}
 					<div class="cell empty" aria-hidden="true"></div>
 				{/if}
@@ -155,7 +158,8 @@
 	}
 
 	.content {
-		width: 600px;
+		max-width: 700px;
+		width: 100%;
 	}
 
 	.stack {
@@ -350,19 +354,5 @@
 	.cell.empty {
 		pointer-events: none;
 		user-select: none;
-	}
-
-	.glyph {
-		font-size: 1.75rem;
-		font-weight: 900;
-		letter-spacing: 0.02em;
-		line-height: 1.05;
-		color: var(--ink);
-	}
-
-	.romaji {
-		margin-top: 0.2rem;
-		font-size: 0.85rem;
-		color: var(--muted);
 	}
 </style>

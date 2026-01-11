@@ -1,15 +1,16 @@
 <script lang="ts">
 	// future: import { page } from '$app/stores';
+	import { resolve } from "$app/paths";
 </script>
 
 <header class="site-header">
 	<nav class="nav">
-		<h1 class="brand"><a href="/">Kanji Notebook</a></h1>
+		<h1 class="brand"><a href={resolve("/")}>Kanji Notebook</a></h1>
 
 		<ul class="nav-links">
-			<li><a href="/kana">Kana</a></li>
-			<li><a href="/kanji">Kanji</a></li>
-			<li><a href="/about">About</a></li>
+			<li><a href={resolve("/kana")}>Kana</a></li>
+			<li><a href={resolve("/kanji")}>Kanji</a></li>
+			<li><a href={resolve("/about")}>About</a></li>
 		</ul>
 	</nav>
 </header>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import KanjiInfoModal from "$lib/components/KanjiInfoModal.svelte";
+	import SymbolCard from "$lib/components/SymbolCard.svelte";
 	import type { PageData } from "./$types";
 	import { onMount } from "svelte";
 
@@ -64,33 +65,18 @@
 
 					<div class="grid" aria-label={`${label(group.level)} kanji`}>
 						{#each group.items as item (item.kanji)}
-							<button
-								class="kanji-card"
-								class:selected={selected?.item.kanji === item.kanji}
-								type="button"
-								aria-label={`Kanji ${item.kanji}`}
-								aria-pressed={selected?.item.kanji === item.kanji}
+							<SymbolCard
+								selected={selected?.item.kanji === item.kanji}
+								symbol={item.kanji}
+								subText={null}
 								onclick={() => toggleSelect(group.level, item)}
-							>
-								<div class="kanji">{item.kanji}</div>
-							</button>
+							/>
 						{/each}
 					</div>
 				</section>
 			{/each}
 		</div>
 	</section>
-
-	<!-- Backdrop (mobile + helps close) -->
-	<button
-		class="backdrop"
-		type="button"
-		aria-label="Close kanji details"
-		class:open={isOpen}
-		onclick={closeSidebar}
-	></button>
-
-	<!-- Sidebar drawer -->
 
 	<KanjiInfoModal
 		open={!!selected}
@@ -209,81 +195,6 @@
 		gap: 0.75rem;
 	}
 
-	.kanji-card {
-		display: grid;
-		place-items: center;
-		height: 86px;
-
-		border-radius: var(--radius-sm);
-		border: 2px solid var(--stroke);
-		background: var(--paper);
-		box-shadow: var(--shadow-soft);
-
-		cursor: pointer;
-		transition:
-			transform 140ms ease,
-			border-color 140ms ease,
-			box-shadow 140ms ease,
-			background 140ms ease;
-	}
-
-	.kanji-card:hover {
-		transform: translateY(-3px);
-		border-color: var(--stroke-accent);
-		box-shadow: var(--shadow);
-	}
-
-	.kanji-card:active {
-		transform: translateY(-1px);
-		box-shadow: var(--shadow-soft);
-	}
-
-	.kanji-card:focus-visible {
-		outline: 3px solid var(--stroke-accent);
-		outline-offset: 3px;
-	}
-
-	.kanji-card.selected {
-		border-color: var(--stroke-accent);
-		box-shadow: var(--shadow);
-		background: rgba(255, 255, 255, 0.92);
-	}
-
-	.kanji {
-		font-size: 2.2rem;
-		font-weight: 950;
-		color: var(--ink);
-	}
-
-	/* Backdrop */
-	.backdrop {
-		position: fixed;
-		inset: 0;
-		background: rgba(15, 10, 10, 0.22);
-		opacity: 0;
-		pointer-events: none;
-		transition: opacity 200ms ease;
-		z-index: 40;
-		border: 0;
-		padding: 0;
-	}
-
-	.backdrop.open {
-		opacity: 1;
-		pointer-events: auto;
-	}
-
-	/* Desktop behavior:
-	   keep backdrop disabled and allow content to remain interactive if you want
-	   (you can remove this if you prefer modal behavior everywhere). */
-	@media (min-width: 1024px) {
-		.backdrop {
-			/* On desktop, keep it subtle and non-blocking */
-			pointer-events: none;
-			opacity: 0;
-		}
-	}
-
 	/* Mobile: turn into a bottom sheet */
 	@media (max-width: 640px) {
 		.page {
@@ -292,10 +203,6 @@
 
 		.groupHeader {
 			padding: 0.9rem;
-		}
-
-		.backdrop.open {
-			pointer-events: auto;
 		}
 	}
 </style>

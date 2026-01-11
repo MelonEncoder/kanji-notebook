@@ -37,8 +37,9 @@
 		valid: boolean;
 	}
 
-	let kanji: string = "挨";
-	let rawKanjiSvg: string = "";
+	let { symbol }: { symbol: string } = $props<{ symbol: string }>();
+
+	let rawSymbolSvg: string = "";
 
 	let viewBox: ViewBox = $state({ x: 0, y: 0, w: 109, h: 109 });
 	let kanjiStrokes: KanjiStroke[] = $state([]);
@@ -199,8 +200,8 @@
 	}
 
 	onMount(async () => {
-		rawKanjiSvg = await loadKanjiSvg(kanji);
-		const svgDoc = new DOMParser().parseFromString(rawKanjiSvg, "image/svg+xml");
+		rawSymbolSvg = await loadKanjiSvg(symbol);
+		const svgDoc = new DOMParser().parseFromString(rawSymbolSvg, "image/svg+xml");
 		viewBox = parseViewBox(svgDoc);
 
 		kanjiStrokes = [...svgDoc.querySelectorAll("path")]
@@ -220,7 +221,7 @@
 		// Wait for Svelte to render the SVG paths so bindings are populated
 		await tick();
 
-		// Measure length of the *actual displayed* paths
+		// Measure length of the actual displayed paths
 		kanjiStrokes = kanjiStrokes.map((stroke, i) => {
 			const path = kanjiPathElements[i];
 			let len = 0;
@@ -351,17 +352,10 @@
 		gap: 1rem;
 		min-height: 100dvh;
 		padding: 1.25rem;
-
-		background:
-			radial-gradient(1200px 700px at 50% -10%, var(--wash), transparent 55%),
-			radial-gradient(900px 520px at 90% 20%, var(--wash2), transparent 60%),
-			linear-gradient(180deg, var(--paper), var(--paper));
-
 		color: var(--ink);
 		font-family: var(--font);
 	}
 
-	/* Stage becomes a paper surface with ink border */
 	.stage {
 		position: relative;
 		width: min(600px, 92vw);
@@ -378,7 +372,6 @@
 		will-change: transform;
 	}
 
-	/* very subtle guide grid */
 	.kanji-grid {
 		position: absolute;
 		inset: 0;
@@ -410,13 +403,11 @@
 		stroke-linejoin: round;
 	}
 
-	/* completed / reference strokes */
 	.kanji path.fill {
 		stroke-width: 3;
 		stroke: rgba(36, 27, 26, 0.16);
 	}
 
-	/* active dashed guide stroke */
 	.kanji path.dash {
 		stroke: var(--coral);
 		stroke-width: 1.2;
@@ -438,7 +429,6 @@
 		fill: var(--coral);
 	}
 
-	/* completed stroke becomes ink */
 	.kanji path.completed {
 		stroke: var(--ink);
 		opacity: 0.95;
@@ -491,7 +481,6 @@
 		padding: 0.85rem;
 	}
 
-	/* button system consistent with kana page */
 	button {
 		border: 2px solid var(--stroke);
 		background: var(--paper);
@@ -532,7 +521,6 @@
 		outline-offset: 3px;
 	}
 
-	/* status text */
 	.status {
 		font-size: 0.95rem;
 		color: var(--muted);
@@ -540,7 +528,6 @@
 		letter-spacing: 0.02em;
 	}
 
-	/* optional: improve spacing on small screens */
 	@media (max-width: 640px) {
 		.page {
 			padding: 1rem;

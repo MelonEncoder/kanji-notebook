@@ -58,23 +58,11 @@
 		/* TYPOGRAPHY */
 		--font: "Murecho";
 
-		@media (max-width: 640px) {
-			:root {
-				--paper: rgb(255, 255, 255);
-				--paper-soft: rgb(255, 255, 255);
-				--linear-grad: linear-gradient(180deg, rgb(255, 255, 255), rgb(255, 255, 255));
-			}
-		}
-
 		font-family:
 			var(--font),
 			ui-sans-serif,
 			system-ui,
 			-apple-system;
-
-		/* =========================
-	   GLOBAL TUNING
-	   ========================= */
 		color-scheme: light;
 		text-rendering: optimizeLegibility;
 		-webkit-font-smoothing: antialiased;
