@@ -21,11 +21,11 @@
 		kanji = "挨",
 		loop = true,
 		showControls = true
-	} = $props<{
+	}: {
 		kanji?: string;
 		loop?: boolean;
 		showControls?: boolean;
-	}>();
+	} = $props();
 
 	let rawKanjiSvg = "";
 	let viewBox: ViewBox = $state({ x: 0, y: 0, w: 109, h: 109 });

@@ -2,7 +2,14 @@
 	import Modal from "$lib/components/Modal.svelte";
 	import Animated from "$lib/components/Animated.svelte";
 
-	let { open, kanji, jlptLevel, info, onClose, onPractice } = $props<{
+	let {
+		open,
+		kanji,
+		jlptLevel,
+		info,
+		onClose,
+		onPractice
+	}: {
 		open: boolean;
 		kanji: string;
 		jlptLevel: string;
@@ -14,7 +21,7 @@
 		};
 		onClose: () => void;
 		onPractice?: (kanji: string) => void;
-	}>();
+	} = $props();
 
 	function startPractice() {
 		onPractice?.(kanji);

@@ -1,13 +1,17 @@
 <script lang="ts">
+	import type { Snippet } from "svelte";
+
 	let {
+		children,
 		open,
 		title = "",
 		onClose = () => {}
-	} = $props<{
+	}: {
+		children: Snippet;
 		open: boolean;
 		title?: string;
 		onClose?: () => void;
-	}>();
+	} = $props();
 
 	let panel: HTMLElement | null = $state(null);
 	let lastActive: HTMLElement | null = $state(null);
@@ -104,7 +108,9 @@
 {#if open}
 	<button class="overlay" role="dialog" aria-modal="true" aria-label={title} onclick={onBackdrop}>
 		<div class="panel" bind:this={panel} tabindex="-1">
-			<slot />
+			{#if children}
+				{@render children()}
+			{/if}
 		</div>
 	</button>
 {/if}

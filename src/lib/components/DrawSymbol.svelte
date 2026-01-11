@@ -37,7 +37,7 @@
 		valid: boolean;
 	}
 
-	let { symbol }: { symbol: string } = $props<{ symbol: string }>();
+	let { symbol }: { symbol: string } = $props();
 
 	let rawSymbolSvg: string = "";
 

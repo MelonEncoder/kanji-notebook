@@ -5,13 +5,13 @@
 		subText,
 		progress = 0,
 		onclick
-	} = $props<{
+	}: {
 		selected: boolean;
 		symbol: string;
 		subText: string | null;
 		progress?: 0 | 1 | 2 | 3 | 4 | 5;
 		onclick: () => void;
-	}>();
+	} = $props();
 
 	function calcWidthFromProgress(progress: number) {
 		return `${progress * 20}%`;
