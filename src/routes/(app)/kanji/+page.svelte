@@ -4,15 +4,12 @@
 	import type { PageData } from "./$types";
 	import { onMount } from "svelte";
 
-	const { data }: { data: PageData } = $props();
-
-	// server now returns: { pageItems: PageItem[] }
-	const totalKanji = $derived(data.items.length);
-
 	type Item = (typeof data.items)[number];
 	type GroupLevel = 1 | 2 | 3 | 4 | 5 | "other";
-
 	type Selected = { item: Item } | null;
+
+	const { data }: { data: PageData } = $props();
+	const totalKanji = $derived(data.items.length);
 
 	let selected: Selected = $state(null);
 	const isOpen = $derived(!!selected);
@@ -108,29 +105,23 @@
 			{/each}
 		</div>
 	</section>
-
-	<!--
-		Your new PageItem only contains { kvgId, symbol, jlpt }.
-		So we pass minimal info here.
-		If KanjiInfoModal fetches details internally by `kanji`, you're good.
-	-->
-	<KanjiInfoModal
-		open={!!selected}
-		kanji={selected?.item.symbol ?? ""}
-		jlptLevel={selected?.item.jlpt ?? null}
-		info={{
-			meanings: [],
-			readings_on: [],
-			readings_kun: [],
-			strokes: null
-		}}
-		onClose={closeModal}
-		onPractice={(kanji: string) => {
-			closeModal();
-			console.log(kanji);
-			// goto(`/practice/${kanji}`);
-		}}
-	/>
+	{#if selected}
+		<KanjiInfoModal
+			open={!!selected}
+			kanji={selected.item.symbol}
+			jlptLevel={selected.item.jlpt}
+			meanings={selected.item.meanings}
+			readings_on={selected.item.readings_on}
+			readings_kun={selected.item.readings_kun}
+			strokes={selected.item.strokes ?? 0}
+			onClose={closeModal}
+			onPractice={(kanji: string) => {
+				closeModal();
+				console.log(kanji);
+				// goto(`/practice/${kanji}`);
+			}}
+		/>
+	{/if}
 </main>
 
 <style>

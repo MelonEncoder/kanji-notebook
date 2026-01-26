@@ -6,19 +6,20 @@
 		open,
 		kanji,
 		jlptLevel,
-		info,
+		meanings,
+		readings_kun,
+		readings_on,
+		strokes,
 		onClose,
 		onPractice
 	}: {
 		open: boolean;
 		kanji: string;
 		jlptLevel: 1 | 2 | 3 | 4 | 5 | null;
-		info: {
-			meanings: string[];
-			readings_on: string[];
-			readings_kun: string[];
-			strokes: number | null;
-		};
+		meanings?: string[];
+		readings_on?: string[];
+		readings_kun?: string[];
+		strokes: number | null;
 		onClose: () => void;
 		onPractice?: (kanji: string) => void;
 	} = $props();
@@ -30,11 +31,6 @@
 	const label = (level: 1 | 2 | 3 | 4 | 5 | null) =>
 		level === null ? "Not in JLPT" : `JLPT N${level}`;
 	const fmt = (xs: string[]) => xs.join(" • ");
-
-	const meanings = $derived(info?.meanings ?? []);
-	const onReadings = $derived(info?.readings_on ?? []);
-	const kunReadings = $derived(info?.readings_kun ?? []);
-	const strokes = $derived(info?.strokes ?? null);
 </script>
 
 <Modal {open} title={`Kanji details for ${kanji}`} {onClose}>
@@ -61,7 +57,7 @@
 			<section class="grid">
 				<div class="card">
 					<h3 class="title">Meanings</h3>
-					{#if meanings.length}
+					{#if meanings?.length}
 						<p class="text">{fmt(meanings)}</p>
 					{:else}
 						<p class="muted">—</p>
@@ -70,8 +66,8 @@
 
 				<div class="card">
 					<h3 class="title">On</h3>
-					{#if onReadings.length}
-						<p class="text">{fmt(onReadings)}</p>
+					{#if readings_on}
+						<p class="text">{fmt(readings_on)}</p>
 					{:else}
 						<p class="muted">—</p>
 					{/if}
@@ -79,8 +75,8 @@
 
 				<div class="card">
 					<h3 class="title">Kun</h3>
-					{#if kunReadings.length}
-						<p class="text">{fmt(kunReadings)}</p>
+					{#if readings_kun}
+						<p class="text">{fmt(readings_kun)}</p>
 					{:else}
 						<p class="muted">—</p>
 					{/if}

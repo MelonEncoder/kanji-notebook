@@ -6,6 +6,10 @@ export type PageItem = {
 	kvgId: string;
 	symbol: string;
 	jlpt: 1 | 2 | 3 | 4 | 5 | null;
+	meanings: string[];
+	readings_on: string[];
+	readings_kun: string[];
+	strokes: number | null;
 };
 
 export const load: PageServerLoad = async () => {
@@ -13,7 +17,11 @@ export const load: PageServerLoad = async () => {
 		return {
 			kvgId: id,
 			symbol: item.symbol,
-			jlpt: item.jlpt_new
+			jlpt: item.jlpt_new,
+			meanings: item.meanings,
+			readings_on: item.readings_on,
+			readings_kun: item.readings_kun,
+			strokes: item.strokes
 		};
 	});
 
